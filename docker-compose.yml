@@ -1,11 +1,11 @@
 version: '3.7'
 
 services:
-  main:
-    container_name: main
+  web:
     build:
       context: .
       target: development
+    restart: always
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -15,9 +15,11 @@ services:
     command: npm run start:dev
     networks:
       - webnet
-  postgres:
-    container_name: db
+    depends_on:
+      - db
+  db:
     image: postgres
+    restart: always
     volumes:
       - ./database:/var/lib/postgresql/data
     environment: 
