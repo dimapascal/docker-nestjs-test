@@ -3,8 +3,9 @@ version: '3.7'
 services:
   web:
     build:
-      context: .
+      context: ./
       target: development
+      dockerfile: Dockerfile
     restart: always
     volumes:
       - .:/usr/src/app
@@ -12,9 +13,9 @@ services:
     env_file:
       - .env
     ports:
-      - ${HTTP_PORT}:3000
+      - ${HTTP_PORT}:${HTTP_PORT}
       - 9229:9229
-    command: npm run start:dev
+    command: yarn start:dev
     networks:
       - webnet
     depends_on:
