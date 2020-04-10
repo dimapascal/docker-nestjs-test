@@ -23,6 +23,6 @@ RUN yarn --only=production
 
 COPY . .
 
-COPY --from=development /usr/src/app/ ./
+COPY --from=development /usr/src/app/dist ./dist
 
 CMD ["node", "dist/main"]
