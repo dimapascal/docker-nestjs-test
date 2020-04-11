@@ -1,8 +1,7 @@
 version: '3.7'
 
 services:
-  db:
-    container_name: db
+  postgres:
     image: postgres
     restart: always
     volumes:
@@ -10,14 +9,13 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_PASSWORD:'${DB_PASSWORD}'
+      - POSTGRES_USER:'${DB_USER}'
+      - POSTGRES_DB:'${DB_NAME}'
     ports:
       - '${DB_PORT}:5432'
 
   api:
-    container_name: api
     build:
       context: ./
       target: development
@@ -32,4 +30,4 @@ services:
       - ${HTTP_PORT}:${HTTP_PORT}
     command: yarn start:dev
     depends_on:
-      - db
+      - postgres

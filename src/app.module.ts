@@ -6,17 +6,17 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    // TypeOrmModule.forRoot({
-    //   type: 'postgres',
-    //   host: 'postgresdb',
-    //   port: 5433,
-    //   username: 'postgres',
-    //   password: 'postgres',
-    //   database: 'testdb',
-    //   entities: [],
-    //   synchronize: true,
-    //   logging: true,
-    // }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'postgres',
+      port: 5433,
+      username: 'admin',
+      password: 'admin',
+      database: 'testdb',
+      entities: [],
+      synchronize: true,
+      logging: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
