@@ -1,33 +1,56 @@
 version: '3.7'
 
 services:
-  postgres:
-    image: postgres
-    restart: always
-    volumes:
-      - ./database:/var/lib/postgresql/data
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_PASSWORD:'${DB_PASSWORD}'
-      - POSTGRES_USER:'${DB_USER}'
-      - POSTGRES_DB:'${DB_NAME}'
-    ports:
-      - '${DB_PORT}:5432'
-
-  api:
+  # Nest js server
+  nestjs_container:
     build:
       context: ./
       target: development
       dockerfile: Dockerfile
-    restart: always
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     env_file:
       - .env
     ports:
       - ${HTTP_PORT}:${HTTP_PORT}
-    command: yarn start:dev
     depends_on:
       - postgres
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    command: yarn start:dev
+
+  # Database server
+  postgres:
+    container_name: ${DATABASE_HOST:-postgres_container}
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - '${DATABASE_PORT:-5432}:5432'
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # PgAdmin server
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_EMAIL:-admin}
+    ports:
+      - '${PGADMIN_PORT:-5050}:80'
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin:/root/.pgadmin
+    restart: unless-stopped
+
+volumes:
+  pgadmin:
